@@ -1,0 +1,16 @@
+{
+  "name": "Rastreador de Habitos Verdes",
+  "short_name": "Habitos Verdes",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0b1c17",
+  "theme_color": "#0b5d3b",
+  "description": "Tracker gamificado de habitos sustentaveis com impacto ambiental.",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

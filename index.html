@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <meta name="theme-color" content="#0b5d3b" />
+    <title>Rastreador de Habitos Verdes</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero-text">
+          <p class="kicker">Seu progresso verde</p>
+          <h1>Rastreador de Habitos Verdes</h1>
+          <p class="subtitle">
+            Gamificado, offline e com impacto ambiental real.
+          </p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <p class="stat-label">Pontos</p>
+            <p class="stat-value" id="totalPoints">0</p>
+            <p class="stat-sub" id="levelLabel">Nivel 1</p>
+          </div>
+          <div class="progress-ring" id="levelRing" aria-label="Progresso do nivel">
+            <div class="progress-ring-inner">
+              <p class="ring-value" id="levelProgress">0%</p>
+              <p class="ring-label">Proximo nivel</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="panel impact-panel">
+          <div class="panel-header">
+            <h2>Impacto Ambiental</h2>
+            <p class="panel-subtitle">Total acumulado pelos habitos concluidos.</p>
+          </div>
+          <div class="impact-grid">
+            <div class="impact-card">
+              <div class="impact-icon">CO2</div>
+              <div>
+                <p class="impact-value" id="co2Total">0</p>
+                <p class="impact-label">kg CO2 evitado</p>
+              </div>
+            </div>
+            <div class="impact-card">
+              <div class="impact-icon">H2O</div>
+              <div>
+                <p class="impact-value" id="waterTotal">0</p>
+                <p class="impact-label">L de agua economizados</p>
+              </div>
+            </div>
+            <div class="impact-card">
+              <div class="impact-icon">RS</div>
+              <div>
+                <p class="impact-value" id="wasteTotal">0</p>
+                <p class="impact-label">kg de residuos evitados</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Habitos de Hoje</h2>
+            <p class="panel-subtitle" id="todayLabel">Complete seus habitos diarios.</p>
+          </div>
+          <ul class="habit-list" id="habitList"></ul>
+        </section>
+
+        <section class="panel badges-panel">
+          <div class="panel-header">
+            <h2>Badges</h2>
+            <p class="panel-subtitle">Desbloqueie conquistas sustentaveis.</p>
+          </div>
+          <div class="badges-grid" id="badgesGrid"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Semana em grafico</h2>
+            <p class="panel-subtitle">Completos nos ultimos 7 dias.</p>
+          </div>
+          <div class="weekly-chart" id="weeklyChart"></div>
+        </section>
+
+        <section class="panel add-panel">
+          <div class="panel-header">
+            <h2>Adicionar habito</h2>
+            <p class="panel-subtitle">Personalize seus habitos e impactos.</p>
+          </div>
+          <form class="habit-form" id="habitForm">
+            <label>
+              Nome do habito
+              <input type="text" name="name" placeholder="Ex: Levar garrafa reutilizavel" required />
+            </label>
+            <div class="form-grid">
+              <label>
+                kg CO2 evitado
+                <input type="number" name="co2" min="0" step="0.1" value="0.4" />
+              </label>
+              <label>
+                Litros de agua
+                <input type="number" name="water" min="0" step="1" value="20" />
+              </label>
+              <label>
+                kg residuos
+                <input type="number" name="waste" min="0" step="0.1" value="0.1" />
+              </label>
+              <label>
+                Pontos
+                <input type="number" name="points" min="1" step="1" value="12" />
+              </label>
+            </div>
+            <button type="submit">Adicionar habito</button>
+          </form>
+          <p class="status" id="status"></p>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
