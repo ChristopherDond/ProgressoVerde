@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const STATIC_CACHE = `green-habits-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `green-habits-runtime-${CACHE_VERSION}`;
 
@@ -7,6 +7,7 @@ const ASSETS = [
   "./index.html",
   "./styles.css",
   "./app.js",
+  "./three-scene.js",
   "./manifest.json",
   "./icons/icon.svg",
 ];
