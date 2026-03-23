@@ -113,6 +113,8 @@ const elements = {
 
 const dayLabels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
 
+const chartNamespace = "http://www.w3.org/2000/svg";
+
 function formatDate(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -398,23 +400,40 @@ function renderBadges(earnedMap, stats) {
     if (!earned) {
       card.classList.add("locked");
     }
-      
-      const icon = document.createElement("div");
-      icon.className = "badge-icon";
-      icon.textContent = badge.icon || "🏆";
 
-      const title = document.createElement("p");
-      title.className = "badge-title";
-      title.textContent = badge.title;
-      const description = document.createElement("p");
-      description.textContent = badge.description;
-      const meta = document.createElement("p");
-      meta.className = "badge-meta";
-      meta.textContent = earned
-        ? "Desbloqueado"
-        : `Progresso: ${badge.progress(stats)}`;
+    const icon = document.createElement("div");
+    icon.className = "badge-icon";
+    icon.textContent = badge.icon || "🏆";
 
-      card.appendChild(icon);
+    const title = document.createElement("p");
+    title.className = "badge-title";
+    title.textContent = badge.title;
+
+    const description = document.createElement("p");
+    description.className = "badge-description";
+    description.textContent = badge.description;
+
+    const meta = document.createElement("p");
+    meta.className = "badge-meta";
+    meta.textContent = earned
+      ? "Desbloqueado"
+      : `Progresso: ${badge.progress(stats)}`;
+
+    card.appendChild(icon);
+    card.appendChild(title);
+    card.appendChild(description);
+    card.appendChild(meta);
+    elements.badgesGrid.appendChild(card);
+  });
+}
+
+function createSVGElement(name) {
+  return document.createElementNS(chartNamespace, name);
+}
+
+function renderWeekly(entriesByDate, today) {
+  elements.weeklyChart.innerHTML = "";
+
   const data = [];
   for (let i = 6; i >= 0; i -= 1) {
     const date = parseDateString(today);
@@ -425,50 +444,166 @@ function renderBadges(earnedMap, stats) {
   }
 
   const max = Math.max(1, ...data.map((item) => item.count));
-  const maxHeight = 110;
+  const width = 760;
+  const height = 260;
+  const paddingX = 42;
+  const chartTop = 24;
+  const chartBottom = 178;
+  const stepX = (width - paddingX * 2) / (data.length - 1);
+  const toY = (value) => chartBottom - (value / max) * (chartBottom - chartTop);
 
-  data.forEach((item) => {
-    const wrapper = document.createElement("div");
-    wrapper.style.display = "flex";
-    wrapper.style.flexDirection = "column";
-    wrapper.style.alignItems = "center";
-    wrapper.style.justifyContent = "flex-end";
-    wrapper.style.flex = "1";
+  const points = data.map((item, index) => ({
+    ...item,
+    x: paddingX + index * stepX,
+    y: toY(item.count),
+  }));
 
-    const barContainer = document.createElement("div");
-    barContainer.style.width = "40%";
-    barContainer.style.maxWidth = "20px";
-    barContainer.style.background = "linear-gradient(180deg, var(--accent), transparent)";
-    barContainer.style.borderRadius = "4px 4px 0 0";
-    barContainer.style.position = "relative";
-    
-    // Altura da barra com base no max
-    const height = Math.max(10, Math.round((item.count / max) * maxHeight));  
-    barContainer.style.height = `${height}px`;
+  const svg = createSVGElement("svg");
+  svg.setAttribute("class", "weekly-chart-svg");
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  svg.setAttribute("preserveAspectRatio", "none");
 
-    // Bolinha brilhante no topo
-    const dot = document.createElement("div");
-    dot.style.position = "absolute";
-    dot.style.top = "-4px";
-    dot.style.left = "50%";
-    dot.style.transform = "translateX(-50%)";
-    dot.style.width = "8px";
-    dot.style.height = "8px";
-    dot.style.background = "#fff";
-    dot.style.borderRadius = "50%";
-    dot.style.boxShadow = "0 0 8px var(--accent)";
-    barContainer.appendChild(dot);
+  const defs = createSVGElement("defs");
 
-    const label = document.createElement("div");
-    label.style.marginTop = "8px";
-    label.style.fontSize = "0.75rem";
-    label.style.color = "var(--text-muted)";
-    label.textContent = item.label;
+  const areaGradient = createSVGElement("linearGradient");
+  areaGradient.setAttribute("id", "weeklyAreaGradient");
+  areaGradient.setAttribute("x1", "0");
+  areaGradient.setAttribute("x2", "0");
+  areaGradient.setAttribute("y1", "0");
+  areaGradient.setAttribute("y2", "1");
 
-    wrapper.appendChild(barContainer);
-    wrapper.appendChild(label);
-    elements.weeklyChart.appendChild(wrapper);
+  const stopTop = createSVGElement("stop");
+  stopTop.setAttribute("offset", "0%");
+  stopTop.setAttribute("stop-color", "#7dffab");
+  stopTop.setAttribute("stop-opacity", "0.52");
+
+  const stopBottom = createSVGElement("stop");
+  stopBottom.setAttribute("offset", "100%");
+  stopBottom.setAttribute("stop-color", "#7dffab");
+  stopBottom.setAttribute("stop-opacity", "0");
+
+  areaGradient.appendChild(stopTop);
+  areaGradient.appendChild(stopBottom);
+
+  const glow = createSVGElement("filter");
+  glow.setAttribute("id", "weeklyGlow");
+  glow.setAttribute("x", "-30%");
+  glow.setAttribute("y", "-30%");
+  glow.setAttribute("width", "160%");
+  glow.setAttribute("height", "160%");
+
+  const blur = createSVGElement("feGaussianBlur");
+  blur.setAttribute("stdDeviation", "2.4");
+  blur.setAttribute("result", "blur");
+  glow.appendChild(blur);
+
+  defs.appendChild(areaGradient);
+  defs.appendChild(glow);
+  svg.appendChild(defs);
+
+  points.forEach((point) => {
+    const line = createSVGElement("line");
+    line.setAttribute("x1", String(point.x));
+    line.setAttribute("x2", String(point.x));
+    line.setAttribute("y1", String(chartTop));
+    line.setAttribute("y2", String(chartBottom + 24));
+    line.setAttribute("class", "chart-grid-line");
+    svg.appendChild(line);
   });
+
+  const areaPath = createSVGElement("path");
+  const linePath = createSVGElement("path");
+
+  const lineCommand = points
+    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
+    .join(" ");
+
+  const areaCommand = `${lineCommand} L ${points[points.length - 1].x} ${chartBottom} L ${points[0].x} ${chartBottom} Z`;
+
+  areaPath.setAttribute("d", areaCommand);
+  areaPath.setAttribute("fill", "url(#weeklyAreaGradient)");
+  areaPath.setAttribute("opacity", "0.85");
+
+  linePath.setAttribute("d", lineCommand);
+  linePath.setAttribute("fill", "none");
+  linePath.setAttribute("stroke", "#6bff9a");
+  linePath.setAttribute("stroke-width", "4");
+  linePath.setAttribute("stroke-linecap", "round");
+  linePath.setAttribute("stroke-linejoin", "round");
+  linePath.setAttribute("filter", "url(#weeklyGlow)");
+
+  svg.appendChild(areaPath);
+  svg.appendChild(linePath);
+
+  points.forEach((point) => {
+    const dot = createSVGElement("circle");
+    dot.setAttribute("cx", String(point.x));
+    dot.setAttribute("cy", String(point.y));
+    dot.setAttribute("r", "6");
+    dot.setAttribute("class", "chart-point");
+
+    const label = createSVGElement("text");
+    label.setAttribute("x", String(point.x));
+    label.setAttribute("y", String(chartBottom + 42));
+    label.setAttribute("text-anchor", "middle");
+    label.setAttribute("class", "chart-label");
+    label.textContent = point.label;
+
+    svg.appendChild(dot);
+    svg.appendChild(label);
+  });
+
+  elements.weeklyChart.appendChild(svg);
+}
+
+function initSinglePageNav() {
+  const links = Array.from(
+    document.querySelectorAll('.nav-links a[href^="#"]')
+  );
+  if (links.length === 0) {
+    return;
+  }
+
+  const sections = links
+    .map((link) => {
+      const target = document.querySelector(link.getAttribute("href"));
+      return target ? { link, target } : null;
+    })
+    .filter(Boolean);
+
+  links.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      const selector = link.getAttribute("href");
+      const section = selector ? document.querySelector(selector) : null;
+      if (!section) {
+        return;
+      }
+
+      event.preventDefault();
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      history.replaceState(null, "", selector);
+    });
+  });
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) {
+          return;
+        }
+
+        sections.forEach(({ link, target }) => {
+          link.classList.toggle("active", target === entry.target);
+        });
+      });
+    },
+    {
+      threshold: 0.4,
+      rootMargin: "-15% 0px -30% 0px",
+    }
+  );
+
+  sections.forEach(({ target }) => observer.observe(target));
 }
 
 function updateTodayLabel(today) {
@@ -528,6 +663,7 @@ async function init() {
     const db = await getDB();
     await seedDefaultHabits(db);
     await refresh(db);
+    initSinglePageNav();
     registerServiceWorker();
   } catch (error) {
     console.error(error);
