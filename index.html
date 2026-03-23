@@ -26,14 +26,14 @@
           </div>
         </div>
         <ul class="nav-links">
-          <li><a href="#" class="active">Home</a></li>
-          <li><a href="#">Badges</a></li>
-          <li><a href="#">Analise</a></li>
-          <li><a href="#">Perfil</a></li>
+          <li><a href="#home" class="active">Home</a></li>
+          <li><a href="#badges-section">Badges</a></li>
+          <li><a href="#impact-section">Analise</a></li>
+          <li><a href="#add-habit-section">Perfil</a></li>
         </ul>
       </nav>
 
-      <main>
+      <main id="home">
         <section class="hero-3d-section">
           <div class="hero-cube-container" id="cubeCanvasWrapper">
             <!-- 3D Canvas inserido aqui via Three.js -->
@@ -60,7 +60,7 @@
           </div>
         </section>
 
-        <section class="impact-panel">
+        <section id="impact-section" class="impact-panel">
           <div class="impact-grid">
             <div class="impact-card glass-card">
               <div class="card-glow"></div>
@@ -113,7 +113,7 @@
               <p class="panel-subtitle">Gamificado, offline e com impacto ambiental real.</p>
             </div>
 
-            <section class="panel badges-panel">
+            <section id="badges-section" class="panel badges-panel">
               <h3 style="margin-bottom: 15px;">Badges</h3>
               <div class="badges-grid" id="badgesGrid"></div>
             </section>
@@ -125,7 +125,7 @@
           </div>
 
           <div class="column-right">
-            <section class="panel add-panel glass-card">
+            <section id="add-habit-section" class="panel add-panel glass-card">
               <div class="panel-header centered">
                 <h2>Adicionar habito</h2>
               </div>

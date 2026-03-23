@@ -426,18 +426,43 @@ function renderBadges(earnedMap, stats) {
 
   data.forEach((item) => {
     const wrapper = document.createElement("div");
-    wrapper.style.display = "grid";
-    wrapper.style.gap = "6px";
-    wrapper.style.alignItems = "end";
-    const bar = document.createElement("div");
-    bar.className = "bar";
-    const height = Math.max(14, Math.round((item.count / max) * maxHeight));
-    bar.style.height = `${height}px`;
-    bar.textContent = item.count;
+    wrapper.style.display = "flex";
+    wrapper.style.flexDirection = "column";
+    wrapper.style.alignItems = "center";
+    wrapper.style.justifyContent = "flex-end";
+    wrapper.style.flex = "1";
+
+    const barContainer = document.createElement("div");
+    barContainer.style.width = "40%";
+    barContainer.style.maxWidth = "20px";
+    barContainer.style.background = "linear-gradient(180deg, var(--accent), transparent)";
+    barContainer.style.borderRadius = "4px 4px 0 0";
+    barContainer.style.position = "relative";
+    
+    // Altura da barra com base no max
+    const height = Math.max(10, Math.round((item.count / max) * maxHeight));  
+    barContainer.style.height = `${height}px`;
+
+    // Bolinha brilhante no topo
+    const dot = document.createElement("div");
+    dot.style.position = "absolute";
+    dot.style.top = "-4px";
+    dot.style.left = "50%";
+    dot.style.transform = "translateX(-50%)";
+    dot.style.width = "8px";
+    dot.style.height = "8px";
+    dot.style.background = "#fff";
+    dot.style.borderRadius = "50%";
+    dot.style.boxShadow = "0 0 8px var(--accent)";
+    barContainer.appendChild(dot);
+
     const label = document.createElement("div");
-    label.className = "bar-label";
+    label.style.marginTop = "8px";
+    label.style.fontSize = "0.75rem";
+    label.style.color = "var(--text-muted)";
     label.textContent = item.label;
-    wrapper.appendChild(bar);
+
+    wrapper.appendChild(barContainer);
     wrapper.appendChild(label);
     elements.weeklyChart.appendChild(wrapper);
   });
