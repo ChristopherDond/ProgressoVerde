@@ -7,10 +7,14 @@
       content="width=device-width, initial-scale=1"
     />
     <meta name="theme-color" content="#0b5d3b" />
+    <meta name="description" content="Acompanhe habitos sustentaveis com gamificacao, offline e impacto ambiental." />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Rastreador de Habitos Verdes</title>
     <link rel="manifest" href="manifest.json" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon.svg" />
   </head>
   <body>
     <div class="app-shell">
@@ -100,29 +104,29 @@
           <form class="habit-form" id="habitForm">
             <label>
               Nome do habito
-              <input type="text" name="name" placeholder="Ex: Levar garrafa reutilizavel" required />
+              <input type="text" name="name" placeholder="Ex: Levar garrafa reutilizavel" maxlength="80" required />
             </label>
             <div class="form-grid">
               <label>
                 kg CO2 evitado
-                <input type="number" name="co2" min="0" step="0.1" value="0.4" />
+                <input type="number" name="co2" min="0" max="50" step="0.1" value="0.4" />
               </label>
               <label>
                 Litros de agua
-                <input type="number" name="water" min="0" step="1" value="20" />
+                <input type="number" name="water" min="0" max="1000" step="1" value="20" />
               </label>
               <label>
                 kg residuos
-                <input type="number" name="waste" min="0" step="0.1" value="0.1" />
+                <input type="number" name="waste" min="0" max="50" step="0.1" value="0.1" />
               </label>
               <label>
                 Pontos
-                <input type="number" name="points" min="1" step="1" value="12" />
+                <input type="number" name="points" min="1" max="500" step="1" value="12" />
               </label>
             </div>
             <button type="submit">Adicionar habito</button>
           </form>
-          <p class="status" id="status"></p>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
         </section>
       </main>
     </div>

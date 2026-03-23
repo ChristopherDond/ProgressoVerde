@@ -129,9 +129,22 @@ function toNumber(value) {
   return Number.isFinite(value) ? value : 0;
 }
 
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
 function setStatus(message, isError = false) {
   elements.status.textContent = message;
   elements.status.style.color = isError ? "#ffb4b4" : "";
+}
+
+let dbPromise;
+
+function getDB() {
+  if (!dbPromise) {
+    dbPromise = openDB();
+  }
+  return dbPromise;
 }
 
 function openDB() {
@@ -438,6 +451,22 @@ function registerServiceWorker() {
   }
   navigator.serviceWorker
     .register("sw.js")
+    .then((registration) => {
+      registration.addEventListener("updatefound", () => {
+        const installing = registration.installing;
+        if (!installing) {
+          return;
+        }
+        installing.addEventListener("statechange", () => {
+          if (
+            installing.state === "installed" &&
+            navigator.serviceWorker.controller
+          ) {
+            setStatus("Nova versao disponivel. Recarregue para atualizar.");
+          }
+        });
+      });
+    })
     .catch((error) => console.error("SW failed", error));
 }
 
@@ -447,7 +476,7 @@ async function init() {
     return;
   }
   try {
-    const db = await openDB();
+    const db = await getDB();
     await seedDefaultHabits(db);
     await refresh(db);
     registerServiceWorker();
@@ -461,13 +490,15 @@ elements.habitForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
   const data = new FormData(form);
+  const rawName = String(data.get("name") || "").trim();
+  const name = rawName.replace(/\s+/g, " ").slice(0, 80);
   const habit = {
     id: createId(),
-    name: String(data.get("name")).trim(),
-    co2: Number(data.get("co2")) || 0,
-    water: Number(data.get("water")) || 0,
-    waste: Number(data.get("waste")) || 0,
-    points: Math.max(1, Number(data.get("points")) || 1),
+    name,
+    co2: clamp(Number(data.get("co2")) || 0, 0, 50),
+    water: clamp(Number(data.get("water")) || 0, 0, 1000),
+    waste: clamp(Number(data.get("waste")) || 0, 0, 50),
+    points: clamp(Math.round(Number(data.get("points")) || 1), 1, 500),
   };
 
   if (!habit.name) {
@@ -476,7 +507,7 @@ elements.habitForm.addEventListener("submit", async (event) => {
   }
 
   try {
-    const db = await openDB();
+    const db = await getDB();
     const tx = db.transaction("habits", "readwrite");
     tx.objectStore("habits").add(habit);
     await transactionPromise(tx);
