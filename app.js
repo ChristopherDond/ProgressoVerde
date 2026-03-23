@@ -311,7 +311,10 @@ function renderHabits(db, habits, stats, today) {
   elements.habitList.innerHTML = "";
   const todayMap = new Map(stats.todayEntries.map((entry) => [entry.habitId, entry]));
 
-  habits.forEach((habit) => {
+  // Inverter o array para que os hábitos mais novos apareçam no topo
+  const reversedHabits = [...habits].reverse();
+
+  reversedHabits.forEach((habit) => {
     const item = document.createElement("li");
     item.className = "habit-item";
 
