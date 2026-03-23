@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 const STATIC_CACHE = `green-habits-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `green-habits-runtime-${CACHE_VERSION}`;
 
