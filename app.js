@@ -49,6 +49,7 @@ const badgeDefinitions = [
     id: "first-step",
     title: "Primeiro passo",
     description: "Complete 1 habito verde.",
+    icon: "🏅",
     criteria: (stats) => stats.totalEntries >= 1,
     progress: (stats) => `${Math.min(stats.totalEntries, 1)}/1`,
   },
@@ -56,6 +57,7 @@ const badgeDefinitions = [
     id: "week-warrior",
     title: "Eco consistente",
     description: "Complete 7 habitos.",
+    icon: "🏆",
     criteria: (stats) => stats.totalEntries >= 7,
     progress: (stats) => `${Math.min(stats.totalEntries, 7)}/7`,
   },
@@ -63,6 +65,7 @@ const badgeDefinitions = [
     id: "streak-3",
     title: "Sequencia verde",
     description: "Manter 3 dias seguidos.",
+    icon: "💎",
     criteria: (stats) => stats.streak >= 3,
     progress: (stats) => `${Math.min(stats.streak, 3)}/3`,
   },
@@ -70,6 +73,7 @@ const badgeDefinitions = [
     id: "co2-hero",
     title: "Heroi do CO2",
     description: "Evite 20kg de CO2.",
+    icon: "🌍",
     criteria: (stats) => stats.co2 >= 20,
     progress: (stats) => `${Math.min(stats.co2, 20).toFixed(1)}/20`,
   },
@@ -77,6 +81,7 @@ const badgeDefinitions = [
     id: "water-guardian",
     title: "Guardiao da agua",
     description: "Economize 300L de agua.",
+    icon: "💧",
     criteria: (stats) => stats.water >= 300,
     progress: (stats) => `${Math.min(stats.water, 300).toFixed(0)}/300`,
   },
@@ -84,6 +89,7 @@ const badgeDefinitions = [
     id: "waste-zero",
     title: "Rumo ao zero",
     description: "Evite 5kg de residuos.",
+    icon: "♻️",
     criteria: (stats) => stats.waste >= 5,
     progress: (stats) => `${Math.min(stats.waste, 5).toFixed(1)}/5`,
   },
@@ -269,7 +275,16 @@ function updateHeader(stats) {
   const progressPercent = Math.min(100, Math.round((progress / 100) * 100));
   elements.levelLabel.textContent = `Nivel ${level}`;
   elements.levelProgress.textContent = `${progressPercent}%`;
-  elements.levelRing.style.setProperty("--progress", progressPercent);
+  
+  const svgRing = document.getElementById("levelRingSVG");
+  if (svgRing) {
+    const offset = 314 - (progressPercent / 100) * 314;
+    svgRing.style.strokeDashoffset = Math.max(0, offset);
+  }
+  
+  if (elements.levelRing) {
+    elements.levelRing.style.setProperty("--progress", progressPercent);
+  }
 }
 
 function updateImpact(stats) {
@@ -311,12 +326,21 @@ function renderHabits(db, habits, stats, today) {
 
     const toggleWrapper = document.createElement("label");
     toggleWrapper.className = "habit-toggle";
+    
+    const label = document.createElement("span");
+    label.className = "status-badge";
+    label.textContent = todayMap.has(habit.id) ? "Concluído" : "Pendente";
+
     const toggle = document.createElement("input");
     toggle.type = "checkbox";
+    toggle.className = "custom-checkbox";
     toggle.checked = todayMap.has(habit.id);
     toggle.setAttribute("aria-label", `Marcar ${habit.name} como feito`);
-    const label = document.createElement("span");
-    label.textContent = toggle.checked ? "Concluido" : "Pendente";
+    
+    if (toggle.checked) {
+      item.classList.add("completed");
+    }
+
     toggleWrapper.appendChild(toggle);
     toggleWrapper.appendChild(label);
 
@@ -371,26 +395,23 @@ function renderBadges(earnedMap, stats) {
     if (!earned) {
       card.classList.add("locked");
     }
-    const title = document.createElement("p");
-    title.className = "badge-title";
-    title.textContent = badge.title;
-    const description = document.createElement("p");
-    description.textContent = badge.description;
-    const meta = document.createElement("p");
-    meta.className = "badge-meta";
-    meta.textContent = earned
-      ? "Desbloqueado"
-      : `Progresso: ${badge.progress(stats)}`;
+      
+      const icon = document.createElement("div");
+      icon.className = "badge-icon";
+      icon.textContent = badge.icon || "🏆";
 
-    card.appendChild(title);
-    card.appendChild(description);
-    card.appendChild(meta);
-    elements.badgesGrid.appendChild(card);
-  });
-}
+      const title = document.createElement("p");
+      title.className = "badge-title";
+      title.textContent = badge.title;
+      const description = document.createElement("p");
+      description.textContent = badge.description;
+      const meta = document.createElement("p");
+      meta.className = "badge-meta";
+      meta.textContent = earned
+        ? "Desbloqueado"
+        : `Progresso: ${badge.progress(stats)}`;
 
-function renderWeekly(entriesByDate, today) {
-  elements.weeklyChart.innerHTML = "";
+      card.appendChild(icon);
   const data = [];
   for (let i = 6; i >= 0; i -= 1) {
     const date = parseDateString(today);

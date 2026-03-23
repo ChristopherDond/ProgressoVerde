@@ -2,10 +2,7 @@
 <html lang="pt-br">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0b5d3b" />
     <meta name="description" content="Acompanhe habitos sustentaveis com gamificacao, offline e impacto ambiental." />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -15,122 +12,157 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icons/icon.svg" />
+    <!-- Carregando Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   </head>
   <body>
+    <div class="glow-bg"></div>
     <div class="app-shell">
-      <header class="hero">
-        <div class="hero-text">
-          <p class="kicker">Seu progresso verde</p>
-          <h1>Rastreador de Habitos Verdes</h1>
-          <p class="subtitle">
-            Gamificado, offline e com impacto ambiental real.
-          </p>
-        </div>
-        <div class="hero-stats">
-          <div class="stat-card">
-            <p class="stat-label">Pontos</p>
-            <p class="stat-value" id="totalPoints">0</p>
-            <p class="stat-sub" id="levelLabel">Nivel 1</p>
-          </div>
-          <div class="progress-ring" id="levelRing" aria-label="Progresso do nivel">
-            <div class="progress-ring-inner">
-              <p class="ring-value" id="levelProgress">0%</p>
-              <p class="ring-label">Proximo nivel</p>
-            </div>
+      <nav class="top-nav">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M12 22c4.97-1.4 7.67-4.93 8.7-9.42C21.6 8.76 22 5.5 22 2c-3.5 0-6.76.4-10.58 1.3C6.93 4.33 3.4 7.03 2 12c4.97-1.4 7.67-4.93 8.7-9.42C11.6 2.87 12 5.5 12 2" stroke="#54d27c"/><path d="M12 2v20" stroke="#54d27c"/></svg>
+          <div class="logo-text">
+            <strong>Rastreador</strong><br /><span>de Habitos Verdes</span>
           </div>
         </div>
-      </header>
+        <ul class="nav-links">
+          <li><a href="#" class="active">Home</a></li>
+          <li><a href="#">Badges</a></li>
+          <li><a href="#">Analise</a></li>
+          <li><a href="#">Perfil</a></li>
+        </ul>
+      </nav>
 
       <main>
-        <section class="panel impact-panel">
-          <div class="panel-header">
-            <h2>Impacto Ambiental</h2>
-            <p class="panel-subtitle">Total acumulado pelos habitos concluidos.</p>
+        <section class="hero-3d-section">
+          <div class="hero-cube-container" id="cubeCanvasWrapper">
+            <!-- 3D Canvas inserido aqui via Three.js -->
           </div>
+          <div class="hero-stats glass-card">
+            <div class="progress-container">
+              <div class="progress-ring-wrapper">
+                <svg class="progress-ring-svg" viewBox="0 0 120 120">
+                  <circle class="progress-ring-bg" cx="60" cy="60" r="50"></circle>
+                  <circle class="progress-ring-fore" id="levelRingSVG" cx="60" cy="60" r="50"></circle>
+                </svg>
+                <div class="ring-content">
+                  <p class="ring-value" id="levelProgress">0%</p>
+                  <p class="ring-label" id="levelLabel">Nivel 1</p>
+                </div>
+              </div>
+            </div>
+            <div class="stats-points">
+              <p class="stat-value" id="totalPoints">0</p>
+              <p class="stat-label">Pontos</p>
+            </div>
+            <!-- Div escondida para manter compatibilidade com app.js -->
+            <div id="levelRing" style="display:none;"></div>
+          </div>
+        </section>
+
+        <section class="impact-panel">
           <div class="impact-grid">
-            <div class="impact-card">
-              <div class="impact-icon">CO2</div>
-              <div>
-                <p class="impact-value" id="co2Total">0</p>
-                <p class="impact-label">kg CO2 evitado</p>
+            <div class="impact-card glass-card">
+              <div class="card-glow"></div>
+              <div class="impact-header">
+                <div class="impact-icon co2-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14l-4-4h8l-4 4zm0-10v6"/></svg>
+                </div>
+                <h3>CO₂</h3>
               </div>
+              <p class="impact-value"><span id="co2Total">0</span> kg</p>
+              <p class="impact-label">CO2 evitado</p>
             </div>
-            <div class="impact-card">
-              <div class="impact-icon">H2O</div>
-              <div>
-                <p class="impact-value" id="waterTotal">0</p>
-                <p class="impact-label">L de agua economizados</p>
+            <div class="impact-card glass-card">
+              <div class="card-glow"></div>
+              <div class="impact-header">
+                <div class="impact-icon h2o-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                </div>
+                <h3>H₂O</h3>
               </div>
+              <p class="impact-value"><span id="waterTotal">0</span> L</p>
+              <p class="impact-label">de água economizados</p>
             </div>
-            <div class="impact-card">
-              <div class="impact-icon">RS</div>
-              <div>
-                <p class="impact-value" id="wasteTotal">0</p>
-                <p class="impact-label">kg de residuos evitados</p>
+            <div class="impact-card glass-card">
+              <div class="card-glow"></div>
+              <div class="impact-header">
+                <div class="impact-icon rs-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M12 3v18M6.5 6.5l11 11M6.5 17.5l11-11"/></svg>
+                </div>
+                <h3>RS</h3>
               </div>
+              <p class="impact-value"><span id="wasteTotal">0</span> kg</p>
+              <p class="impact-label">de resíduos evitados</p>
             </div>
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel habits-panel">
           <div class="panel-header">
             <h2>Habitos de Hoje</h2>
-            <p class="panel-subtitle" id="todayLabel">Complete seus habitos diarios.</p>
+            <p class="panel-subtitle" id="todayLabel">Hoje</p>
           </div>
           <ul class="habit-list" id="habitList"></ul>
         </section>
 
-        <section class="panel badges-panel">
-          <div class="panel-header">
-            <h2>Badges</h2>
-            <p class="panel-subtitle">Desbloqueie conquistas sustentaveis.</p>
-          </div>
-          <div class="badges-grid" id="badgesGrid"></div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-header">
-            <h2>Semana em grafico</h2>
-            <p class="panel-subtitle">Completos nos ultimos 7 dias.</p>
-          </div>
-          <div class="weekly-chart" id="weeklyChart"></div>
-        </section>
-
-        <section class="panel add-panel">
-          <div class="panel-header">
-            <h2>Adicionar habito</h2>
-            <p class="panel-subtitle">Personalize seus habitos e impactos.</p>
-          </div>
-          <form class="habit-form" id="habitForm">
-            <label>
-              Nome do habito
-              <input type="text" name="name" placeholder="Ex: Levar garrafa reutilizavel" maxlength="80" required />
-            </label>
-            <div class="form-grid">
-              <label>
-                kg CO2 evitado
-                <input type="number" name="co2" min="0" max="50" step="0.1" value="0.4" />
-              </label>
-              <label>
-                Litros de agua
-                <input type="number" name="water" min="0" max="1000" step="1" value="20" />
-              </label>
-              <label>
-                kg residuos
-                <input type="number" name="waste" min="0" max="50" step="0.1" value="0.1" />
-              </label>
-              <label>
-                Pontos
-                <input type="number" name="points" min="1" max="500" step="1" value="12" />
-              </label>
+        <div class="grid-columns">
+          <div class="column-left">
+            <div class="panel-header" style="margin-bottom: 20px;">
+              <h2>Rastreador de <span class="text-highlight">Habitos Verdes</span></h2>
+              <p class="panel-subtitle">Gamificado, offline e com impacto ambiental real.</p>
             </div>
-            <button type="submit">Adicionar habito</button>
-          </form>
-          <p class="status" id="status" role="status" aria-live="polite"></p>
-        </section>
+
+            <section class="panel badges-panel">
+              <h3 style="margin-bottom: 15px;">Badges</h3>
+              <div class="badges-grid" id="badgesGrid"></div>
+            </section>
+
+            <section class="panel graph-panel glass-card">
+              <h3>Semana em gráfico</h3>
+              <div class="weekly-chart" id="weeklyChart"></div>
+            </section>
+          </div>
+
+          <div class="column-right">
+            <section class="panel add-panel glass-card">
+              <div class="panel-header centered">
+                <h2>Adicionar habito</h2>
+              </div>
+              <form class="habit-form" id="habitForm">
+                <label>
+                  Nome do habito
+                  <input type="text" name="name" placeholder="Ex: Levar garrafa reutilizavel" maxlength="80" required class="glass-input" />
+                </label>
+                <div class="form-grid">
+                  <label>
+                    kg CO2 evitado
+                    <input type="number" name="co2" min="0" max="50" step="0.1" value="0.4" class="glass-input" />
+                  </label>
+                  <label>
+                    Litros de agua
+                    <input type="number" name="water" min="0" max="1000" step="1" value="20" class="glass-input" />
+                  </label>
+                  <label>
+                    kg residuos
+                    <input type="number" name="waste" min="0" max="50" step="0.1" value="0.1" class="glass-input" />
+                  </label>
+                  <label>
+                    Pontos
+                    <input type="number" name="points" min="1" max="500" step="1" value="12" class="glass-input" />
+                  </label>
+                </div>
+                <button type="submit" class="glow-button">Adicionar habito</button>
+              </form>
+              <p class="status" id="status" role="status" aria-live="polite"></p>
+            </section>
+          </div>
+        </div>
       </main>
     </div>
 
+    <!-- Scripts -->
     <script src="app.js"></script>
+    <script src="three-scene.js"></script>
   </body>
 </html>
